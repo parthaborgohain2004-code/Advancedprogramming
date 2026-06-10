@@ -1,0 +1,67 @@
+from typing import List, Dict, Set
+from collections import defaultdict
+from functools import reduce
+import math
+
+logs: List[Dict[str, object]] = [
+    {"user": "CSB24001", "action": "YouTube", "duration": 30.5},
+    {"user": "CSB24002", "action": "Instagram", "duration": 45.0},
+    {"user": "CSB24001", "action": "VSCode", "duration": 120.0},
+    {"user": "CSB24003", "action": "YouTube", "duration": 25.0},
+    {"user": "CSB24002", "action": "Chrome", "duration": 60.0},
+    {"user": "CSB24001", "action": "Instagram", "duration": 15.5},
+]
+
+def total_time_per_user(logs: List[Dict[str, object]]) -> Dict[str, float]:
+    totals: defaultdict[str, float] = defaultdict(float)
+    for log in logs:
+        totals[log["user"]] += float(log["duration"])
+    return dict(totals)
+
+def most_active_users(logs: List[Dict[str, object]], k: int) -> List[str]:
+    totals = total_time_per_user(logs)
+    return [
+        user
+        for user, _ in sorted(
+            totals.items(),
+            key=lambda item: item[1],
+            reverse=True
+        )[:k]
+    ]
+
+def unique_actions(logs: List[Dict[str, object]]) -> Set[str]:
+    return {log["action"] for log in logs}
+
+def total_activity_time(logs: List[Dict[str, object]]) -> float:
+    return reduce(lambda acc, log: acc + float(log["duration"]), logs, 0.0)
+
+if __name__ == "__main__":
+    n = len(logs)
+
+    print("Total Time Per User:")
+    totals = total_time_per_user(logs)
+    print(totals)
+
+    print("\nMost Active 2 Users:")
+    top_users = most_active_users(logs, 2)
+    print(top_users)
+
+    print("\nUnique Actions:")
+    print(unique_actions(logs))
+
+    print("\nTotal Activity Time (All Users):")
+    print(total_activity_time(logs))
+
+    u = len(totals)
+
+    print("\nComplexity Analysis:")
+    time_complexity_value = u * math.log2(u) if u > 0 else 0
+
+    print("Time Complexity for Top K Users:")
+    print("O(n + u log u)")
+    print(f"Here n = {n} (total logs), u = {u} (unique users)")
+    print(f"Approximate operations = {int(n + time_complexity_value)}")
+
+    print("\nSpace Complexity:")
+    print("O(u) for storing intermediate user totals dictionary")
+    print(f"Intermediate dictionary size = {u}")
